@@ -19,8 +19,9 @@ try
     Console.WriteLine($"{server.LocalEndpoint.ToString()}");
     while (true)
     {
-        using var handler = await server.AcceptSocketAsync(); // wait for client
-        Task.Run(() => Respond(handler));
+        var socket = server.AcceptSocket(); // wait for client
+        var newThread = new Thread(() => Respond(socket));
+        newThread.Start();
     }
 }
 catch (Exception ex)
