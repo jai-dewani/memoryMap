@@ -20,6 +20,7 @@ try
         var message = $"+PONG\r\n";
         var messageBytes = Encoding.UTF8.GetBytes(message);
         await stream.WriteAsync(messageBytes);
+        stream.Close();
     }
 }
 catch (Exception ex)
