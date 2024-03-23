@@ -14,5 +14,4 @@ await using NetworkStream stream = handler.GetStream();
 var message = $"+PONG\r\n";
 var messageBytes = Encoding.UTF8.GetBytes(message);
 await stream.WriteAsync(messageBytes);
-
-server.Stop();
+handler.Close();
