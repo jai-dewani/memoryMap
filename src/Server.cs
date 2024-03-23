@@ -19,7 +19,9 @@ try
         var message = $"+PONG\r\n";
         var messageBytes = Encoding.UTF8.GetBytes(message);
         handler.Send(messageBytes);
-    
+        byte[] data = new byte[256];
+        handler.Receive(data);
+        Console.WriteLine($"data - {data}");
     }
 }
 catch (Exception ex)
