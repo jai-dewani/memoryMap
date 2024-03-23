@@ -62,8 +62,7 @@ class RedisParser
     {
         List<string> parsedCommands = new List<string>();
         var tokens = input.Split("\r\n");
-        foreach (var token in tokens)
-            Console.WriteLine(token);
+
 
         if (tokens[0].ElementAt(0) == '*')
         {
@@ -79,6 +78,9 @@ class RedisParser
             // It's a simple string
             parsedCommands.Add(tokens[0].Substring(1));
         }
+        Console.WriteLine($"Parsed Commands");
+        foreach (var token in parsedCommands)
+            Console.WriteLine(token);
         return parsedCommands;
     }
 
@@ -89,7 +91,7 @@ class RedisParser
             case StringType.SimpleStrings:
                 return $"+{message}\r\n";
             case StringType.BulkStrings:
-                return $"{message.Length}\r\n{message}\r\n";
+                return $"${message.Length}\r\n{message}\r\n";
             default:
                 return $"{message}";
         }
