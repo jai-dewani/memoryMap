@@ -8,14 +8,27 @@ Console.WriteLine("Logs from your program will appear here!");
 
 // Uncomment this block to pass the first stage
 TcpListener server = new TcpListener(IPAddress.Any, 6379);
-server.Start();
-while (true)
+try
 {
-    using TcpClient handler = await server.AcceptTcpClientAsync(); // wait for client
-    await using NetworkStream stream = handler.GetStream();
-    var message = $"+PONG\r\n";
-    var messageBytes = Encoding.UTF8.GetBytes(message);
-    await stream.WriteAsync(messageBytes);
 
+    server.Start();
+    Console.WriteLine($"{server.LocalEndpoint.ToString()}");
+    while (true)
+    {
+        using TcpClient handler = await server.AcceptTcpClientAsync(); // wait for client
+        await using NetworkStream stream = handler.GetStream();
+        var message = $"+PONG\r\n";
+        var messageBytes = Encoding.UTF8.GetBytes(message);
+        await stream.WriteAsync(messageBytes);
+    }
 }
-server.Stop();
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
+finally
+{
+    server.Stop();
+}
+
+
