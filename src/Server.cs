@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
+
 
 Redis.Start();
 // foreach(var st in RedisParser.Parse("*2\r\n$4\r\necho\r\n$3\r\nhey\r\n"))
@@ -10,6 +12,8 @@ Redis.Start();
 
 class Redis
 {
+
+    private static RedisKeyVault keyVault = new RedisKeyVault();
     public static void Start()
     {
         TcpListener server = new TcpListener(IPAddress.Any, 6379);
@@ -41,16 +45,31 @@ class Redis
                 string receivedMessage = Encoding.UTF8.GetString(data);
                 Console.WriteLine($"data - {receivedMessage}");
                 var message = RedisParser.Parse(receivedMessage);
-                if (message[0].Equals("echo"))
+                string response;
+                switch (message[0])
                 {
-                    var messageBytes = Encoding.UTF8.GetBytes(RedisParser.Transform(message[1], RedisParser.StringType.BulkStrings));
-                    socket.Send(messageBytes);
+                    case "echo":
+                        response = RedisParser.Transform(message[1], StringType.BulkStrings);
+                        break;
+
+                    case "ping":
+                        response = RedisParser.Transform("PONG", StringType.SimpleStrings);
+                        break;
+
+                    case "get":
+                        response = keyVault.Get(message[1]);
+                        break;
+
+                    case "set":
+                        keyVault.Set(message[1], message[2]);
+                        response = RedisParser.Transform("OK", StringType.SimpleStrings);
+                        break;
+
+                    default:
+                        response = "";
+                        break;
                 }
-                else
-                {
-                    var messageBytes = Encoding.UTF8.GetBytes(RedisParser.Transform("PONG", RedisParser.StringType.SimpleStrings));
-                    socket.Send(messageBytes);
-                }
+                socket.Send(Encoding.UTF8.GetBytes(response));
             }
         }
     }
@@ -96,11 +115,26 @@ class RedisParser
                 return $"{message}";
         }
     }
+}
 
-    public enum StringType
+public enum StringType
+{
+    SimpleStrings,
+    BulkStrings,
+    SimpleErrors,
+}
+
+public class RedisKeyVault
+{
+    private Dictionary<string, string> store = new Dictionary<string, string>();
+
+    public string Get(string key)
     {
-        SimpleStrings,
-        BulkStrings,
-        SimpleErrors,
+        return store[key];
+    }
+
+    public void Set(string key, string value)
+    {
+        store[key] = value;
     }
 }
