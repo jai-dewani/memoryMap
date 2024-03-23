@@ -21,7 +21,7 @@ try
 }
 catch (Exception ex)
 {
-    Console.WriteLine(ex.Message);
+    Console.WriteLine($"Exception! Message - ${ex.Message}");
 }
 finally
 {
@@ -30,11 +30,11 @@ finally
 
 void Respond(Socket? socket)
 {
-    string[] message = new string[] { $"+PONG\r\n", $"3\r\nhey\r\n" };
+    string[] message = new string[] { $"+PONG\r\n", $"$3\r\nhey\r\n" };
     while (socket.Connected)
     {
         byte[] data = new byte[4000];
-        socket.Receive(data);
+        socket.Receive(data, data.Length, SocketFlags.None);
         string receivedMessage = Encoding.UTF8.GetString(data);
         Console.WriteLine($"data - {receivedMessage}");
         if (receivedMessage.Contains("echo"))
