@@ -57,7 +57,7 @@ class Redis
                         break;
 
                     case "get":
-                        response = keyVault.Get(message[1]);
+                        response = RedisParser.Transform(keyVault.Get(message[1]), StringType.BulkStrings);
                         break;
 
                     case "set":
