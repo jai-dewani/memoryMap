@@ -15,12 +15,11 @@ try
     Console.WriteLine($"{server.LocalEndpoint.ToString()}");
     while (true)
     {
-        using TcpClient handler = await server.AcceptTcpClientAsync(); // wait for client
-        await using NetworkStream stream = handler.GetStream();
+        using var handler = await server.AcceptSocketAsync(); // wait for client
         var message = $"+PONG\r\n";
         var messageBytes = Encoding.UTF8.GetBytes(message);
-        await stream.WriteAsync(messageBytes);
-        stream.Close();
+        handler.Send(messageBytes);
+    
     }
 }
 catch (Exception ex)
