@@ -34,13 +34,16 @@ finally
 }
 
 
-void Respond(Socket? handler)
+void Respond(Socket? socket)
 {
-    byte[] data = new byte[256];
-    handler.Receive(data);
-    string receivedMessage = Encoding.UTF8.GetString(data);
-    Console.WriteLine($"data - {receivedMessage}");
-    var message = $"+PONG\r\n";
-    var messageBytes = Encoding.UTF8.GetBytes(message);
-    handler.Send(messageBytes);
+    while (socket.Connected)
+    {
+        byte[] data = new byte[256];
+        socket.Receive(data);
+        string receivedMessage = Encoding.UTF8.GetString(data);
+        Console.WriteLine($"data - {receivedMessage}");
+        var message = $"+PONG\r\n";
+        var messageBytes = Encoding.UTF8.GetBytes(message);
+        socket.Send(messageBytes);
+    }
 }
