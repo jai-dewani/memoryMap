@@ -61,7 +61,10 @@ class Redis
                         break;
 
                     case "set":
-                        keyVault.Set(message[1], RedisParser.Transform(message[2], int.Parse(message[4])));
+                        if (message.Count > 3)
+                            keyVault.Set(message[1], RedisParser.Transform(message[2], int.Parse(message[4])));
+                        else
+                            keyVault.Set(message[1], RedisParser.Transform(message[2]));
                         response = RedisParser.Transform("OK", StringType.SimpleStrings);
                         break;
 
@@ -124,7 +127,7 @@ class RedisParser
             return $"${message.value.Length}\r\n{message}\r\n";
     }
 
-    public static RedisValueModel Transform(string message, int? timeout)
+    public static RedisValueModel Transform(string message, int? timeout = null)
     {
         DateTime? expiry = timeout != null ? DateTime.Now.AddMilliseconds(timeout.Value) : null;
         return new RedisValueModel(message, expiry);
