@@ -124,7 +124,7 @@ class RedisParser
         if (message.expiry != null && DateTime.Now > message.expiry)
             return $"$-1\r\n";
         else
-            return $"${message.value.Length}\r\n{message}\r\n";
+            return $"${message.value.Length}\r\n{message.value}\r\n";
     }
 
     public static RedisValueModel Transform(string message, int? timeout = null)
