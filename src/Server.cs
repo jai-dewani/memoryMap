@@ -57,11 +57,11 @@ class Redis
                         break;
 
                     case "get":
-                        response = RedisParser.Transform(keyVault.Get(message[1]), StringType.BulkStrings);
+                        response = RedisParser.Transform(keyVault.Get(message[1]));
                         break;
 
                     case "set":
-                        keyVault.Set(message[1], message[2]);
+                        keyVault.Set(message[1], RedisParser.Transform(message[2], int.Parse(message[4])));
                         response = RedisParser.Transform("OK", StringType.SimpleStrings);
                         break;
 
@@ -115,6 +115,20 @@ class RedisParser
                 return $"{message}";
         }
     }
+
+    public static string Transform(RedisValueModel message)
+    {
+        if (message.expiry != null && DateTime.Now > message.expiry)
+            return $"$-1\r\n";
+        else
+            return $"${message.value.Length}\r\n{message}\r\n";
+    }
+
+    public static RedisValueModel Transform(string message, int? timeout)
+    {
+        DateTime? expiry = timeout != null ? DateTime.Now.AddMilliseconds(timeout.Value) : null;
+        return new RedisValueModel(message, expiry);
+    }
 }
 
 public enum StringType
@@ -126,15 +140,27 @@ public enum StringType
 
 public class RedisKeyVault
 {
-    private Dictionary<string, string> store = new Dictionary<string, string>();
+    private Dictionary<string, RedisValueModel> store = new Dictionary<string, RedisValueModel>();
 
-    public string Get(string key)
+    public RedisValueModel Get(string key)
     {
         return store[key];
     }
 
-    public void Set(string key, string value)
+    public void Set(string key, RedisValueModel value)
     {
         store[key] = value;
+    }
+}
+
+public class RedisValueModel
+{
+    public string value { get; protected set; }
+    public DateTime? expiry { get; protected set; }
+
+    public RedisValueModel(string value, DateTime? expiry)
+    {
+        this.value = value;
+        this.expiry = expiry;
     }
 }
