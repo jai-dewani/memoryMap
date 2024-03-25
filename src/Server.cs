@@ -11,7 +11,7 @@ Redis.Start();
     foreach(string arg in args){
         Console.WriteLine(arg);
     }
-    Redis.Start(int.Parse(args[0]));
+    Redis.Start(int.Parse(args[1]));
 }
 // foreach(var st in RedisParser.Parse("*2\r\n$4\r\necho\r\n$3\r\nhey\r\n"))
 // {
