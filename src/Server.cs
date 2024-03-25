@@ -3,8 +3,16 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 
+if(args.Length == 0)
+{
 
 Redis.Start();
+}else{
+    foreach(string arg in args){
+        Console.WriteLine(arg);
+    }
+    Redis.Start(int.Parse(args[0]));
+}
 // foreach(var st in RedisParser.Parse("*2\r\n$4\r\necho\r\n$3\r\nhey\r\n"))
 // {
 //     Console.WriteLine(st);
@@ -14,7 +22,7 @@ class Redis
 {
 
     private static RedisKeyVault keyVault = new RedisKeyVault();
-    public static void Start()
+    public static void Start(int port = 6379)
     {
         TcpListener server = new TcpListener(IPAddress.Any, 6379);
         try
