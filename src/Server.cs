@@ -1,14 +1,16 @@
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 using System.Text;
 
-if(args.Length == 0)
+if (args.Length == 0)
 {
-
-Redis.Start();
-}else{
-    foreach(string arg in args){
+    Redis.Start();
+}
+else
+{
+    Console.Write("Application Args - ");
+    foreach (string arg in args)
+    {
         Console.WriteLine(arg);
     }
     Redis.Start(int.Parse(args[1]));
@@ -106,8 +108,6 @@ class RedisParser
             parsedCommands.Add(tokens[0].Substring(1));
         }
         Console.WriteLine($"Parsed Commands");
-        foreach (var token in parsedCommands)
-            Console.WriteLine(token);
         return parsedCommands;
     }
 
