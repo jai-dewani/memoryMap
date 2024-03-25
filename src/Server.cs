@@ -13,10 +13,7 @@ Redis.Start();
     }
     Redis.Start(int.Parse(args[1]));
 }
-// foreach(var st in RedisParser.Parse("*2\r\n$4\r\necho\r\n$3\r\nhey\r\n"))
-// {
-//     Console.WriteLine(st);
-// }
+
 
 class Redis
 {
@@ -24,7 +21,7 @@ class Redis
     private static RedisKeyVault keyVault = new RedisKeyVault();
     public static void Start(int port = 6379)
     {
-        TcpListener server = new TcpListener(IPAddress.Any, 6379);
+        TcpListener server = new TcpListener(IPAddress.Any, port);
         try
         {
             server.Start();
