@@ -5,11 +5,9 @@ class RedisParser
         List<string> parsedCommands = new List<string>();
         var tokens = input.Split("\r\n");
 
-
         if (tokens[0].ElementAt(0) == '*')
         {
             // It's an Array
-            int length = int.Parse(tokens[0].Substring(1));
             for (int i = 2; i < tokens.Length; i += 2)
             {
                 parsedCommands.Add(tokens[i]);
@@ -20,6 +18,9 @@ class RedisParser
             // It's a simple string
             parsedCommands.Add(tokens[0].Substring(1));
         }
+        Console.WriteLine($"Parse RedisParser");
+        foreach(var command in parsedCommands)
+            Console.Write($"{command} ");
         return parsedCommands;
     }
 
