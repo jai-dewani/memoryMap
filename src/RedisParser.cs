@@ -57,6 +57,7 @@ class RedisParser
         {
             response += Transform(message,bulkStrings);
         }
+        Console.WriteLine($"Info message - ${response}");
         return response;
     }
 }
