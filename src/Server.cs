@@ -16,6 +16,8 @@ else
     Redis.Start(int.Parse(args[1]));
 }
 
+RedisConfig.Role = "master";
+
 
 class Redis
 {
@@ -63,6 +65,10 @@ class Redis
                         response = RedisParser.Transform("PONG", StringType.SimpleStrings);
                         break;
 
+                    case "info":
+                        response = RedisParser.Transform(RedisConfig.GetConfig(), StringType.BulkStrings);
+                        break; 
+                        
                     case "get":
                         response = RedisParser.Transform(keyVault.Get(message[1]));
                         break;
@@ -136,6 +142,16 @@ class RedisParser
     {
         DateTime? expiry = timeout != null ? DateTime.Now.AddMilliseconds(timeout.Value) : null;
         return new RedisValueModel(message, expiry);
+    }
+
+    internal static string Transform(string[] messages, StringType bulkStrings)
+    {
+        string response = "";
+        foreach(var message in messages)
+        {
+            response += Transform(message,bulkStrings);
+        }
+        return response;
     }
 }
 
