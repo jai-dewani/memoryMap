@@ -5,7 +5,7 @@ class RedisConfig
     public static List<string> GetConfig()
     {
         var response = new List<string>();
-        response.Append($"role:{Role}");
+        response.Add($"role:{Role}");
         return response;
     }
 }

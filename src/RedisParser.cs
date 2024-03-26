@@ -18,9 +18,6 @@ class RedisParser
             // It's a simple string
             parsedCommands.Add(tokens[0].Substring(1));
         }
-        Console.WriteLine($"Parse RedisParser");
-        foreach(var command in parsedCommands)
-            Console.Write($"{command} ");
         return parsedCommands;
     }
 
