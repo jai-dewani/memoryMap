@@ -2,9 +2,9 @@ class RedisConfig
 {
     public static string Role;
 
-    public static string[] GetConfig()
+    public static List<string> GetConfig()
     {
-        var response = new string[2];
+        var response = new List<string>();
         response.Append($"# Replication");
         response.Append($"role:{Role}");
         return response;
