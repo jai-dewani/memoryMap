@@ -38,7 +38,7 @@ class Redis
                 Console.WriteLine($"data - {receivedMessage}");
                 var message = RedisParser.Parse(receivedMessage);
                 string response;
-                switch (message[0])
+                switch (message[0].ToLower())
                 {
                     case "echo":
                         response = RedisParser.Transform(message[1], StringType.BulkStrings);
