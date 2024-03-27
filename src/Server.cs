@@ -1,5 +1,7 @@
 RedisConfig.Role = "master";
 RedisConfig.Port = 6379;
+RedisConfig.Offset = 0;
+RedisConfig.ReplicationID = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
 var argParser = new ParseCommandLineArguments().Parse(args);
 
 foreach (var arg in argParser.args.Keys)
