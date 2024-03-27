@@ -7,6 +7,7 @@ foreach (var arg in argParser.args.Keys)
     switch (arg)
     {
         case "port":
+            Console.WriteLine($"Port - {argParser.args[arg]}");
             RedisConfig.Port = int.Parse(argParser.args[arg][1]);
             break;
 
