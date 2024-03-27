@@ -7,7 +7,7 @@ foreach (var arg in argParser.args.Keys)
     switch (arg)
     {
         case "port":
-            RedisConfig.Port = int.Parse(argParser.args[arg]);
+            RedisConfig.Port = int.Parse(argParser.args[arg][1]);
             break;
 
         case "replicaof":
@@ -15,18 +15,28 @@ foreach (var arg in argParser.args.Keys)
             break;
     }
 }
-Redis.Start(RedisConfig.Port);
 
+Redis.Start(RedisConfig.Port);
 
 class ParseCommandLineArguments
 {
-    public Dictionary<string, string> args = new Dictionary<string, string>();
+    public Dictionary<string, List<string>> args = new Dictionary<string, List<string>>();
 
     public ParseCommandLineArguments Parse(string[] argument)
     {
-        for (int i = 0; i < argument.Length; i += 2)
+        var argValue = new List<string>();
+        string key = "";
+        for (int i = 0; i < argument.Length; i += 1)
         {
-            this.args.Add(argument[i].Trim('-'), argument[i + 1]);
+            if (argument[i].Contains("--"))
+            {
+                this.args.Add(argument[i].Trim('-'), argValue.Clone());
+                key = argument[i].TrimStart('-');
+            }
+            else
+            {
+                argValue.Add(argument[i]);
+            }
         }
         return this;
     }
