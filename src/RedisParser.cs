@@ -50,12 +50,7 @@ class RedisParser
 
     public static string Transform(List<string> messages, StringType bulkStrings)
     {
-        string response = "";
-        foreach(var message in messages)
-        {
-            response += Transform(message,bulkStrings);
-        }
-        Console.WriteLine($"Info message - {response}");
-        return response;
+        string response = string.Join("\r\n", messages);
+        return $"${response.Length}\r\n{response}\r\n";
     }
 }
