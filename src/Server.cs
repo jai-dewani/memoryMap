@@ -7,8 +7,7 @@ foreach (var arg in argParser.args.Keys)
     switch (arg)
     {
         case "port":
-            Console.WriteLine($"Port - {string.Join(" ", argParser.args[arg])}");
-            RedisConfig.Port = int.Parse(argParser.args[arg][1]);
+            RedisConfig.Port = int.Parse(argParser.args[arg][0]);
             break;
 
         case "replicaof":
