@@ -1,6 +1,7 @@
 class RedisConfig
 {
     public static string Role;
+    public static int Port;
 
     public static List<string> GetConfig()
     {
