@@ -1,6 +1,6 @@
 RedisConfig.Role = "master";
 RedisConfig.Port = 6379;
-var argParser = new ParseCommandLineArguments();
+var argParser = new ParseCommandLineArguments().Parse(args);
 
 foreach (var arg in argParser.args.Keys)
 {
@@ -22,11 +22,12 @@ class ParseCommandLineArguments
 {
     public Dictionary<string, string> args = new Dictionary<string, string>();
 
-    public void Parse(string[] argument)
+    public ParseCommandLineArguments Parse(string[] argument)
     {
         for (int i = 0; i < argument.Length; i += 2)
         {
             this.args.Add(argument[i].Trim('-'), argument[i + 1]);
         }
+        return this;
     }
 }

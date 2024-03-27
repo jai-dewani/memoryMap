@@ -6,7 +6,7 @@ class Redis
 {
 
     private static RedisKeyVault keyVault = new RedisKeyVault();
-    public static void Start(int port = 6379)
+    public static void Start(int port)
     {
         TcpListener server = new TcpListener(IPAddress.Any, port);
         try
@@ -35,8 +35,8 @@ class Redis
                 byte[] data = new byte[4000];
                 socket.Receive(data, data.Length, SocketFlags.None);
                 string receivedMessage = Encoding.UTF8.GetString(data);
-                Console.WriteLine($"data - {receivedMessage}");
                 var message = RedisParser.Parse(receivedMessage);
+                Console.WriteLine(string.Join(" ", message));
                 string response;
                 switch (message[0].ToLower())
                 {
