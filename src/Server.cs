@@ -31,7 +31,7 @@ class ParseCommandLineArguments
         {
             if (argument[i].Contains("--"))
             {
-                this.args.Add(argument[i].Trim('-'), argValue.Clone());
+                this.args.Add(key, argValue.Clone());
                 argValue = new List<string>();
                 key = argument[i].TrimStart('-');
             }
@@ -40,6 +40,7 @@ class ParseCommandLineArguments
                 argValue.Add(argument[i]);
             }
         }
+        this.args.Add(key,argValue.Clone());
         return this;
     }
 }
