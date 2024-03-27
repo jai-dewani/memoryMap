@@ -32,6 +32,7 @@ class ParseCommandLineArguments
             if (argument[i].Contains("--"))
             {
                 this.args.Add(argument[i].Trim('-'), argValue.Clone());
+                argValue = new List<string>();
                 key = argument[i].TrimStart('-');
             }
             else
