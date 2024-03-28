@@ -64,7 +64,15 @@ class RedisClient
         Console.WriteLine($"Master response: {rawArgs}");
 
         await writer.WriteAsync(RedisParser.Transform(new string[] { $"REPLCONF listening-port {RedisConfig.Port}"}));
-        await writer.WriteAsync(RedisParser.Transform(new string[] { $"REPLCONF capa psync2"}));
+        await stream.ReadAsync(rawByteArgs);
+        rawArgs = Encoding.UTF8.GetString(rawByteArgs);
+        Console.WriteLine($"Master response: {rawArgs}");
 
+        
+        await writer.WriteAsync(RedisParser.Transform(new string[] { $"REPLCONF capa psync2"}));
+        await stream.ReadAsync(rawByteArgs);
+        rawArgs = Encoding.UTF8.GetString(rawByteArgs);
+        Console.WriteLine($"Master response: {rawArgs}");
+    
     }
 }
