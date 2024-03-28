@@ -14,11 +14,13 @@ foreach (var arg in argParser.args.Keys)
 
         case "replicaof":
             RedisConfig.Role = "slave";
+            RedisConfig.MasterHostUrl = argParser.args[arg][0];
+            RedisConfig.MasterHostPort = int.Parse(argParser.args[arg][1]);
             break;
     }
 }
 
-Redis.Start(RedisConfig.Port);
+new RedisClient().Start(RedisConfig.Port);
 
 class ParseCommandLineArguments
 {

@@ -1,75 +1,54 @@
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-
 class Redis
 {
-
-    private static RedisKeyVault keyVault = new RedisKeyVault();
-    public static void Start(int port)
+    private RedisKeyVault keyVault = new RedisKeyVault();
+    public string Execute(Command command)
     {
-        TcpListener server = new TcpListener(IPAddress.Any, port);
-        try
+        switch (command)
         {
-            server.Start();
-            while (true)
-            {
-                var socket = server.AcceptSocket(); // wait for client
-                var newThread = new Thread(() => Respond(socket));
-                newThread.Start();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Exception! Message - ${ex.Message}");
-        }
-        finally
-        {
-            server.Stop();
-        }
-
-        void Respond(Socket? socket)
-        {
-            while (socket.Connected)
-            {
-                byte[] data = new byte[4000];
-                socket.Receive(data, data.Length, SocketFlags.None);
-                string receivedMessage = Encoding.UTF8.GetString(data);
-                var message = RedisParser.Parse(receivedMessage);
-                Console.WriteLine(string.Join(" ", message));
-                string response;
-                switch (message[0].ToLower())
-                {
-                    case "echo":
-                        response = RedisParser.Transform(message[1], StringType.BulkStrings);
-                        break;
-
-                    case "ping":
-                        response = RedisParser.Transform("PONG", StringType.SimpleStrings);
-                        break;
-
-                    case "info":
-                        response = RedisParser.Transform(RedisConfig.GetConfig(), StringType.BulkStrings);
-                        break; 
-
-                    case "get":
-                        response = RedisParser.Transform(keyVault.Get(message[1]));
-                        break;
-
-                    case "set":
-                        if (message.Count > 3)
-                            keyVault.Set(message[1], RedisParser.Transform(message[2], int.Parse(message[4])));
-                        else
-                            keyVault.Set(message[1], RedisParser.Transform(message[2]));
-                        response = RedisParser.Transform("OK", StringType.SimpleStrings);
-                        break;
-
-                    default:
-                        response = "";
-                        break;
-                }
-                socket.Send(Encoding.UTF8.GetBytes(response));
-            }
+            case PingCommand pingCommand:
+                return this.Ping(pingCommand);
+            case EchoCommand echoCommand:
+                return this.Echo(echoCommand);
+            case InfoCommand infoCommand:
+                return this.Info(infoCommand);
+            case GetCommand getCommand:
+                return this.Get(getCommand);
+            case SetCommand setCommand:
+                return this.Set(setCommand);
+            default:
+                return "";
         }
     }
+
+    private string Ping(PingCommand pingCommand)
+    {
+        return pingCommand.response;
+    }
+    private string Echo(EchoCommand echoCommand)
+    {
+        return echoCommand.response;
+    }
+    private string Info(InfoCommand infoCommand)
+    {
+        return infoCommand.response;
+    }
+    private string Get(GetCommand getCommand)
+    {
+        var value = this.keyVault.Get(getCommand.key);
+        if (value.expiry != null && DateTime.Now > value.expiry)
+            return RedisParser.Transform("", StringType.NullBulkString);
+        else
+            return RedisParser.Transform(value.value, StringType.BulkString);
+    }
+    private string Set(SetCommand setCommand)
+    {
+        DateTime? expiry = setCommand.expiryInMs != null
+            ? DateTime.Now.AddMilliseconds(setCommand.expiryInMs.Value)
+            : null;
+        RedisValueModel redisValueModel = new RedisValueModel(setCommand.value, expiry);
+        this.keyVault.Set(setCommand.key, redisValueModel);
+        return RedisParser.Transform(setCommand.response, StringType.SimpleString);
+    }
+
 }
+
