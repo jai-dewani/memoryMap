@@ -15,6 +15,8 @@ class Redis
                 return this.Get(getCommand);
             case SetCommand setCommand:
                 return this.Set(setCommand);
+            case ReplConfCommand replConfCommand:
+                return this.ReplConf(replConfCommand);
             default:
                 return "";
         }
@@ -24,14 +26,23 @@ class Redis
     {
         return RedisParser.Transform(pingCommand.response, StringType.SimpleString);
     }
+
+    private string ReplConf(ReplConfCommand replConfCommand)
+    {
+        return RedisParser.Transform(replConfCommand.response, StringType.SimpleString);
+
+    }
+
     private string Echo(EchoCommand echoCommand)
     {
         return RedisParser.Transform(echoCommand.response, StringType.BulkString);
     }
+
     private string Info(InfoCommand infoCommand)
     {
         return RedisParser.Transform(infoCommand.response, StringType.BulkString);
     }
+
     private string Get(GetCommand getCommand)
     {
         var value = this.keyVault.Get(getCommand.key);
@@ -40,6 +51,7 @@ class Redis
         else
             return RedisParser.Transform(value.value, StringType.BulkString);
     }
+
     private string Set(SetCommand setCommand)
     {
         DateTime? expiry = setCommand.expiryInMs != null

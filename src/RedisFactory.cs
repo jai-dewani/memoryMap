@@ -21,6 +21,9 @@ class RedisFactory
             case "set":
                 return new SetCommand(args[1], args[2], args.Count() > 3 ? int.Parse(args[4]) : null);
 
+            case "replconf":
+                return new ReplConfCommand();
+                
             default:
                 return new NullCommand();
         }
@@ -34,6 +37,11 @@ class NullCommand : Command {}
 class PingCommand : Command
 {
     public string response = "PONG";
+}
+
+class ReplConfCommand : Command 
+{
+    public string response = "OK";
 }
 
 class EchoCommand : Command
