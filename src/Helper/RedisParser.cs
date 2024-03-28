@@ -43,6 +43,6 @@ class RedisParser
         {
             response.Add(Transform(message, StringType.BulkString));
         }
-        return $"*{messages.Length}{string.Join("\r\n", response)}";
+        return $"*{messages.Length}\r\n{string.Join("\r\n", response)}";
     }
 }
