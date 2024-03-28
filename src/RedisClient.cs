@@ -7,12 +7,9 @@ class RedisClient
     public Redis redis = new Redis();
     public async void Start(int port)
     {
-        if(RedisConfig.MasterHostUrl != null && RedisConfig.MasterHostPort.HasValue)
+        if (RedisConfig.MasterHostUrl != null && RedisConfig.MasterHostPort.HasValue)
         {
-            using var master = new TcpClient(RedisConfig.MasterHostUrl, RedisConfig.MasterHostPort.Value);
-            await using var stream = master.GetStream();
-            await using var writer = new StreamWriter(stream);
-            await writer.WriteAsync(RedisParser.Transform(new string[]{"ping"}));
+            await ConnectToMaster();
         }
         TcpListener server = new TcpListener(IPAddress.Any, port);
         try
@@ -51,5 +48,23 @@ class RedisClient
             var response = this.redis.Execute(command);
             socket.Send(Encoding.UTF8.GetBytes(response));
         }
+    }
+
+    async Task ConnectToMaster()
+    {
+        using var master = new TcpClient(RedisConfig.MasterHostUrl, RedisConfig.MasterHostPort.Value);
+        await using var stream = master.GetStream();
+        await using var writer = new StreamWriter(stream);
+        await writer.WriteAsync(RedisParser.Transform(new string[] { "ping" }));
+
+
+        byte[] rawByteArgs = new byte[4000];
+        await stream.ReadAsync(rawByteArgs);
+        string rawArgs = Encoding.UTF8.GetString(rawByteArgs);
+        Console.WriteLine($"Master response: {rawArgs}");
+
+        await writer.WriteAsync(RedisParser.Transform(new string[] { $"REPLCONF listening-port {RedisConfig.Port}"}));
+        await writer.WriteAsync(RedisParser.Transform(new string[] { $"REPLCONF capa psync2"}));
+
     }
 }
