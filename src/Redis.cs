@@ -22,15 +22,15 @@ class Redis
 
     private string Ping(PingCommand pingCommand)
     {
-        return pingCommand.response;
+        return RedisParser.Transform(pingCommand.response, StringType.SimpleString);
     }
     private string Echo(EchoCommand echoCommand)
     {
-        return echoCommand.response;
+        return RedisParser.Transform(echoCommand.response, StringType.BulkString);
     }
     private string Info(InfoCommand infoCommand)
     {
-        return infoCommand.response;
+        return RedisParser.Transform(infoCommand.response, StringType.BulkString);
     }
     private string Get(GetCommand getCommand)
     {
