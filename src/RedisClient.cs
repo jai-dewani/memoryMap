@@ -9,7 +9,7 @@ class RedisClient
     {
         if (RedisConfig.MasterHostUrl != null && RedisConfig.MasterHostPort.HasValue)
         {
-            await ConnectToMaster();
+            ConnectToMaster();
         }
         TcpListener server = new TcpListener(IPAddress.Any, port);
         try
@@ -50,7 +50,7 @@ class RedisClient
         }
     }
 
-    async Task ConnectToMaster()
+    async void ConnectToMaster()
     {
         using var master = new TcpClient(RedisConfig.MasterHostUrl, RedisConfig.MasterHostPort.Value);
         await using var stream = master.GetStream();
