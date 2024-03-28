@@ -33,7 +33,7 @@ class NullCommand : Command {}
 
 class PingCommand : Command
 {
-    public string response = "Pong";
+    public string response = "PONG";
 }
 
 class EchoCommand : Command
