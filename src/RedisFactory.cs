@@ -3,7 +3,9 @@ class RedisFactory
 {
     public static Command GetType(string[] args)
     {
+        Console.WriteLine($"RedisFactory = {args.Length}, {String.Join("|", args)}");
         var mainCommand = args[0].ToLower();
+        Console.WriteLine($"mainCommand = {mainCommand}");
         switch (mainCommand)
         {
             case "ping":
@@ -24,11 +26,16 @@ class RedisFactory
             case "replconf":
                 return new ReplConfCommand();
                 
+            case "psync":
+                return new PsyncCommand();
             default:
+                System.Console.WriteLine($"Default Null Command");
                 return new NullCommand();
         }
     }
 }
+
+
 
 abstract class Command { }
 
@@ -36,12 +43,20 @@ class NullCommand : Command {}
 
 class PingCommand : Command
 {
+    public PingCommand(){
+        Console.WriteLine("Ping Command");
+    }
     public string response = "PONG";
 }
 
 class ReplConfCommand : Command 
 {
     public string response = "OK";
+}
+
+class PsyncCommand : Command
+{
+    public string response = $"FULLRESYNC {RedisConfig.ReplicationID} {RedisConfig.Offset}";
 }
 
 class EchoCommand : Command

@@ -17,6 +17,8 @@ class Redis
                 return this.Set(setCommand);
             case ReplConfCommand replConfCommand:
                 return this.ReplConf(replConfCommand);
+            case PsyncCommand psyncCommand:
+                return this.Psync(psyncCommand);
             default:
                 return "";
         }
@@ -24,13 +26,18 @@ class Redis
 
     private string Ping(PingCommand pingCommand)
     {
+        Console.WriteLine($"Ping command received");
         return RedisParser.Transform(pingCommand.response, StringType.SimpleString);
     }
 
     private string ReplConf(ReplConfCommand replConfCommand)
     {
         return RedisParser.Transform(replConfCommand.response, StringType.SimpleString);
+    }
 
+    private string Psync(PsyncCommand psyncCommand)
+    {
+        return RedisParser.Transform(psyncCommand.response, StringType.SimpleString);
     }
 
     private string Echo(EchoCommand echoCommand)

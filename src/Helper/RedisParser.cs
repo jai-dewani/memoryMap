@@ -4,7 +4,7 @@ class RedisParser
     {
         List<string> parsedCommands = new List<string>();
         var tokens = input.Split("\r\n");
-
+        Console.WriteLine($"Tokens = {String.Join(" | ", tokens)}");
         if (tokens[0].ElementAt(0) == '*')
         {
             // It's an Array
